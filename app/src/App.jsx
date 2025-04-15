@@ -6,6 +6,7 @@ import Navbar from "./Component/Navbar"
 import Privatecomponent from "./Component/Privatecomponent"
 import Employee from "./pages/Employee"
 import Task from "./pages/Task";
+import Dashbord from "./pages/Dashbord";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/employee" element={<Employee />} />
           <Route path="/task" element={<Task />} />
+          <Route path="/dashboard" element={ <Dashbord/>}/>
         </Route>
 
       </Routes>

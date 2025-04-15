@@ -24,6 +24,8 @@ app.use('/api/user' , require('./routes/userRoutes'))
 
 app.use("/api/user/taskasign" , require("./routes/taskRoutes"))
 
+app.use('/api/dashboard' , require('./routes/dashboardRoutes'))
+
 
 app.listen(PORT , ()=> {
     console.log(`server run port no ${PORT}`)
