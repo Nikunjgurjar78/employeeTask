@@ -1,8 +1,10 @@
+const jwt = require("jsonwebtoken");
+const Auth = require("../model/authModel");
 
-// const User = require("../model/userModel")
-const Auth = require("../model/authModel")
 
-const jwt = require("jsonwebtoken")
+
+
+
 
 const loginuser = async(req,res)=> {
 
@@ -29,6 +31,6 @@ const loginuser = async(req,res)=> {
 
 module.exports = {loginuser}
 
-const ganerateToken = (id)=> {
+const ganerateToken = (id) => {
     return jwt.sign({id} , process.env.SECRET , {expiresIn :"30d"})
-}
+};

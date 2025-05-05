@@ -4,17 +4,22 @@ const { createTask, getalltask, deletetask, updateTask } = require("../controlle
 const adminProtect = require("../middleware.js/adminMiddleware");
 const router = express.Router();
 
-// post task
-router.post("/" ,adminProtect , createTask)
+// Method = POST
+// For = Asign Taks 
+router.post("/" ,adminProtect , createTask);
 
-// get all task
-router.get('/', adminProtect ,getalltask)
+// Method = GET
+// For = Get all task's
+router.get('/', adminProtect ,getalltask);
 
-// dlt task
-router.delete("/:id" , adminProtect , deletetask)
+// Method = PUT
+// For = Update Task Data
+router.put("/:id",adminProtect , updateTask);
 
-// update task
-router.put("/:id",adminProtect , updateTask)
+// Method = Delete
+// For = Delete Task
+router.delete("/:id" , adminProtect , deletetask);
 
 
-module.exports = router
+
+module.exports = router ;

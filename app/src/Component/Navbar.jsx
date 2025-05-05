@@ -17,11 +17,11 @@ const Navbar = () => {
     return (
         <>
 
-            <div className="w-full bg-white shadow-md px-6 py-4 flex items-center justify-between">
+            <div className="w-full bg-white shadow-md px-10 py-4 flex items-center justify-between ">
 
                 <div className="text-2xl font-bold text-blue-600">
                    <Link to={"/"} >
-                       App
+                      Employee Management Deshboard
                    </Link>
                 </div>
 

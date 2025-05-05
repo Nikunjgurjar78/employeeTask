@@ -13,6 +13,8 @@ const taskSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
+      // Asign Task
       .addCase(asignTask.pending, (state) => {
         state.isLoading = true;
         state.isSuccess = false;
@@ -29,6 +31,7 @@ const taskSlice = createSlice({
         state.message = action.payload;
       })
 
+      // Get All Tasks
       .addCase(allTask.pending, (state, action) => {
         state.isLoading = true;
         state.isSuccess = false;
@@ -43,13 +46,34 @@ const taskSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      })
+
+      // UpdateTask
+      .addCase(updateTaskData.pending, (state, action) => {
+        state.isLoading = true;
+        state.isSuccess = false;
+        state.isError = false;
+      })
+      .addCase(updateTaskData.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.task = state.task.map((task) =>
+           task._id === action.payload._id ? action.payload : task
+        );
+      })
+      .addCase(updateTaskData.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.payload;
       });
   },
 });
 
 export default taskSlice.reducer;
 
-// task asign
+// Asign Task
 export const asignTask = createAsyncThunk(
   "TASK/ASIGN",
   async (formData, thunkAPI) => {
@@ -62,13 +86,26 @@ export const asignTask = createAsyncThunk(
   }
 );
 
-// get task asign user
-
+// Get All Task
 export const allTask = createAsyncThunk("ALL/TASK", async (_, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user.token;
     return await taskService.getAllTask(token);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 });
+
+// Task Data Update
+export const updateTaskData = createAsyncThunk(
+  "UPDATE/TASK",
+  async ({ id, updatedData }, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    try {
+      console.log(updatedData , 'updatedData')
+      return await taskService.updateTask(id, updatedData, token);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);

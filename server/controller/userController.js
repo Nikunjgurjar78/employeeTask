@@ -30,31 +30,7 @@ const getAlldata = async (req, res) => {
   res.status(200).json(users);
 };
 
-const updateDetails = async (req, res) => {
-  const { name, email, phone, department, status } = req.body;
 
-  if (!name || !email || !phone || !department || !status) {
-    res.status(400);
-    throw new Error("fill all details");
-  }
-
-  //user exist
-  const user = await User.findById(req.params.id);
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
-  }
-
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-    name,
-    email,
-    phone,
-    department,
-    status,
-  });
-
-  res.status(200).json(updatedUser);
-};
 
 // delete employe
 const deleteUser = async (req, res) => {
@@ -67,4 +43,36 @@ const deleteUser = async (req, res) => {
 
 
 
+
+const updateDetails = async (req, res) => {
+  const { name, email, phone, department, status } = req.body;
+
+  if (!name || !email || !phone || !department || !status) {
+    res.status(400);
+    throw new Error("Fill all details");
+  }
+  
+  // User exist
+  const user = await User.findById(req.params.id);
+  if(!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, 
+    {name, email, phone, department, status },
+    {new : true}
+  );
+
+  res.status(200).json(updatedUser);
+};
+
+
+
+
+
+
 module.exports = { createUser, updateDetails, getAlldata, deleteUser };
+
+
+

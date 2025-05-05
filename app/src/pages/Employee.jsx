@@ -3,6 +3,14 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteEmploye, getAllemployees, saveUserData, updateEmployee } from '../feature/employee/employeeSlice';
 import Loader from '../Component/Loader';
+// Icons
+import { MdDelete } from "react-icons/md";
+import { RiEdit2Fill } from "react-icons/ri";
+
+
+
+
+
 
 const Employee = () => {
 
@@ -10,8 +18,11 @@ const Employee = () => {
 
     const { employee, isLoading, isSuccess, isError, message } = useSelector((state) => state.employe)
 
+    // Form State
     const [formdata, setformData] = useState({ name: "", email: "", phone: "", department: "", status: "" });
     const { name, email, phone, department, status } = formdata;
+
+    // Edit State
     const [isEditing, setIsEditing] = useState(false)
     const [editId, setEditId] = useState(null)
 
@@ -37,25 +48,35 @@ const Employee = () => {
 
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
+        // Set error ("Please fill all fields")
+        if (!name || !email || !phone || !department || !status) {
+            toast.error("Please fill all fields");
+            return;
+        }
+
+        // Edite Check 
         if (isEditing) {
             dispatch(updateEmployee({ id: editId, updatedData: formdata }));
-            toast.success("employee updated");
+            toast.success("Employee updated");
+            clearFormInputs();
+            setIsEditing(false);
+            setEditId(null);
         } else {
             dispatch(saveUserData(formdata));
-            setformData({
-                name: "", email: "", phone: "", department: "", status: "" 
-            })
+            clearFormInputs();
         }
     };
 
+
+
     const handleDelete = (id) => {
         dispatch(deleteEmploye(id));
-    }
+    };
 
     useEffect(() => {
-        dispatch(getAllemployees())
+        // dispatch(getAllemployees())
 
         if (isError && message) {
             toast.error(message);
@@ -65,115 +86,150 @@ const Employee = () => {
 
 
 
+    // Clear Form Fields
+    const clearFormInputs = () => {
+        setformData({ name: "", email: "", phone: "", department: "", status: "" })
+    };
+
+    
+    // Filter employees based on search 
+    const [searchTerm, setSearchTerm] = useState('');
+    
+    const filteredEmployees = employee?.filter(emp =>
+        emp.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
     if (isLoading) {
         return <Loader />
-    }
+    };
 
     return (
         <>
-            <div className="employeeform h-[20vh] pt-15 pl-10 ">
-                <form className='flex gap-5' onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        name="name"
-                        value={name}
-                        onChange={handleChange}
-                        autoComplete="email"
-                        className=" p-3 bg-gray-400 rounded-sm border border-gray-200 focus:outline-none"
-                        placeholder='Enter name'
-                    />
+            <div className="min-h-[85vh] w-full  md:px-5 py-4 bg-gray-100">
+                <div className="min-h-[80vh] w-full bg-white shadow-lg rounded-2xl p-8">
+                    <h1 className="text-3xl font-semibold mb-2">Add Employees</h1>
+                    <div className="w-full bg-gray-50 shadow-inner rounded-xl p-4">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-4"
+                        >
+                            <input
+                                type="text"
+                                name="name"
+                                value={name}
+                                onChange={handleChange}
+                                placeholder="Enter name"
+                                className="min-w-[150px] p-3 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
 
-                    <input
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={handleChange}
-                        autoComplete="email"
-                        className=" p-3 bg-gray-400 rounded-sm border border-gray-200 focus:outline-none"
-                        placeholder='Enter email'
-                    />
+                            <input
+                                type="email"
+                                name="email"
+                                value={email}
+                                onChange={handleChange}
+                                placeholder="Enter email"
+                                className="min-w-[150px] p-3 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
 
-                    <input
-                        type="text"
-                        name="phone"
-                        value={phone}
-                        onChange={handleChange}
-                        autoComplete="email"
-                        className=" p-3 bg-gray-400 rounded-sm border border-gray-200 focus:outline-none"
-                        placeholder='Enter phone'
-                    />
-                    <input
-                        type="text"
-                        name="department"
-                        value={department}
-                        onChange={handleChange}
-                        autoComplete="email"
-                        className=" p-3 bg-gray-400 rounded-sm border border-gray-200 focus:outline-none"
-                        placeholder='Enter department'
-                    />
-                    <select
-                        name="status"
-                        value={status}
-                        onChange={handleChange}
-                        className="p-3 bg-gray-400 rounded-sm border border-gray-200 focus:outline-none"
-                    >
-                        <option value="">Select Status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
+                            <input
+                                type="text"
+                                name="phone"
+                                value={phone}
+                                onChange={handleChange}
+                                placeholder="Enter phone"
+                                className="min-w-[150px] p-3 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
 
-                    <button type='submit' className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200'>
-                        Add Employee
-                    </button>
-                </form>
-            </div>
+                            <input
+                                type="text"
+                                name="department"
+                                value={department}
+                                onChange={handleChange}
+                                placeholder="Enter department"
+                                className="min-w-[150px] p-3 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
 
-            <div className="p-4 mt-10">
-                <h2 className="text-2xl font-semibold mb-4">Employee Management</h2>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white border rounded-lg shadow">
-                        <thead className="bg-gray-100 text-left">
-                            <tr>
-                                <th className="p-3">Name</th>
-                                <th className="p-3">Email</th>
-                                <th className="p-3">Phone</th>
-                                <th className="p-3">Department</th>
-                                <th className="p-3">Status</th>
-                                <th className="p-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                employee && employee.length > 0 ? (
-                                    employee.map((emp) => (
-                                        <tr key={emp._id} className="border-t">
-                                            <td className="p-3">{emp.name}</td>
-                                            <td className="p-3">{emp.email}</td>
-                                            <td className="p-3">{emp.phone}</td>
-                                            <td className="p-3">{emp.department}</td>
-                                            <td className="p-3">
-                                                <span className={`px-2 py-1 rounded-full text-sm ${emp.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                                                    {emp.status}
-                                                </span>
-                                            </td>
-                                            <td className="p-3 space-x-2">
-                                                <button
-                                                    onClick={() => handleEdit(emp)}
-                                                    className="text-blue-600 hover:underline">Edit</button>
-                                                <button
-                                                    onClick={() => handleDelete(emp._id)}
-                                                    className="text-red-600 hover:underline">Delete</button>
+                            <select
+                                name="status"
+                                value={status}
+                                onChange={handleChange}
+                                className="min-w-[150px] p-3  rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">Select Status</option>
+                                <option value="active">Active</option>
+                                <option value="inActive">Inactive</option>
+                            </select>
+
+                            <div className="w-full">
+                                <button
+                                    type="submit"
+                                    className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-md transition duration-200"
+                                >
+                                    {isEditing ? "Update" : "Add Employe"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div className="bg-white w-full rounded-xl shadow-lg p-6 mt-2">
+                        {/* Heading and Search Bar */}
+                        <div className="flex items-center justify-between mb-3">
+                            <h2 className="text-2xl font-semibold">Employees List</h2>
+                            <input
+                                type="text"
+                                placeholder="Search by name"
+                                className="border border-gray-300 rounded px-3 py-1 w-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        {/* Table */}
+                        <table className="w-full border-collapse mt-2">
+                            <thead>
+                                <tr className="bg-gray-100 text-left text-gray-700">
+                                    <th className="py-3 px-4 border-b">S.No</th>
+                                    <th className="py-3 px-4 border-b">Name</th>
+                                    <th className="py-3 px-4 border-b">Email</th>
+                                    <th className="py-3 px-4 border-b">Phone</th>
+                                    <th className="py-3 px-4 border-b">Department</th>
+                                    <th className="py-3 px-4 border-b">Status</th>
+                                    <th className="py-3 px-4 border-b">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {filteredEmployees && filteredEmployees.length > 0 ? (
+                                    filteredEmployees.map((emp, index) => (
+                                        <tr key={emp._id} className="hover:bg-gray-50 transition">
+                                            <td className="py-3 px-4 border-b">{index + 1}</td>
+                                            <td className="py-3 px-4 border-b">{emp.name}</td>
+                                            <td className="py-3 px-4 border-b">{emp.email}</td>
+                                            <td className="py-3 px-4 border-b">{emp.phone}</td>
+                                            <td className="py-3 px-4 border-b">{emp.department}</td>
+                                            <td className="py-3 px-4 border-b">{emp.status}</td>
+                                            <td className="py-3 px-4 border-b">
+                                                <div className="flex gap-2">
+                                                    <RiEdit2Fill
+                                                        className="text-green-600 text-2xl cursor-pointer hover:text-black"
+                                                        onClick={() => handleEdit(emp)}
+                                                    />
+                                                    <MdDelete
+                                                        className="text-red-600 text-2xl cursor-pointer hover:text-black"
+                                                        onClick={() => handleDelete(emp._id)}
+                                                    />
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="p-3 text-center">No employees found</td>
+                                        <td colSpan="7" className="p-3 text-center text-gray-500">No employees found</td>
                                     </tr>
-                                )
-                            }
-                        </tbody>
-                    </table>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </>
@@ -181,3 +237,11 @@ const Employee = () => {
 }
 
 export default Employee
+
+{/* <div className="flex justify-end mt-10 space-x-2">
+    <button className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded">Previous</button>
+    <button className="px-4 py-2 bg-blue-600 text-white rounded">1</button>
+    <button className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded">2</button>
+    <button className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded">3</button>
+    <button className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded">Next</button>
+</div> */}
